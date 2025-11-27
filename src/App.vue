@@ -8,7 +8,10 @@ import introMd from '../public/queries/intro.md?raw'
 
 const lessonData = parseLessonMarkdown(introMd)
 
-const progress = ref(20)
+const progress = computed(() => {
+  const activeIndex = lessonData.steps.findIndex((step) => step.id === activeStepId.value)
+  return (100 * (activeIndex + 1)) / lessonData.steps.length
+})
 
 const activeStep = computed(() => {
   return lessonData.steps.find((step) => step.id === activeStepId.value)
