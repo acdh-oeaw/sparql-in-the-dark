@@ -114,6 +114,7 @@
   --font-mono: var(--_font-mono, ui-monospace), monospace;
 
   --color-primary: #ffdf4d;
+  --color-dark: #101322;
   --color-background-light: #f6f6f8;
   --color-background-dark: #101322;
   --color-surface-dark: #1e2235;

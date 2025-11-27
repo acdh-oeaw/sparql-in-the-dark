@@ -58,7 +58,7 @@ const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
       <div
         :class="[
           'absolute -top-4 -left-4 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg transition-colors duration-300',
-          props.isActive ? 'bg-primary text-black' : 'bg-slate-700 text-slate-400',
+          props.isActive ? 'bg-primary text-dark' : 'bg-slate-700 text-slate-400',
         ]"
       >
         {{ props.id }}
@@ -72,7 +72,7 @@ const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
       >
         <button
           @click="scrollToTop"
-          class="bg-primary hover:bg-primary/90 text-black font-medium py-2 px-6 rounded-full transition-colors flex items-center gap-2 group"
+          class="bg-primary hover:bg-primary/90 text-dark font-medium py-2 px-6 rounded-full transition-colors flex items-center gap-2 group"
         >
           Restart Lesson
           <ArrowLeft class="size-4"></ArrowLeft>

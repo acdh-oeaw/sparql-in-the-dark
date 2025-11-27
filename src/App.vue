@@ -50,9 +50,7 @@ const handleStepVisible = (id: number) => {
     </header>
     <main className="pt-24 pb-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center py-20 max-w-3xl mx-auto">
-        <h2
-          className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-400 leading-tight"
-        >
+        <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white leading-tight">
           {{ lessonData.title }}
         </h2>
         <p className="text-lg md:text-xl text-slate-400 leading-relaxed">
