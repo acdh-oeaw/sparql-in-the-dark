@@ -23,7 +23,7 @@ LIMIT 10
 ```
 
 ---
-<!-- highlight: -->
+
 ### Introduction
 Welcome! This lesson will guide you through the fundamental structure of a SPARQL query. Scroll down to begin and see how queries are built, piece by piece.
 
@@ -35,14 +35,14 @@ Prefixes are shortcuts. They let us abbreviate long URIs to make our queries cle
 Here, `wd:` stands for a Wikidata entity and `wdt:` for a Wikidata property. Think of them as nicknames for web addresses.
 
 ---
-<!-- highlight: 6-6 -->
+<!-- highlight: 6 -->
 ### The `SELECT` Clause
 The `SELECT` clause specifies which variables you want to see in your results. 
 
 A variable in SPARQL starts with a `?`. In this case, we are asking for the labels of the country and its capital.
 
 ---
-<!-- highlight: 7-7, 16-16 -->
+<!-- highlight: 7, 16 -->
 ### The `WHERE` Clause
 This is the heart of the query. The `WHERE` clause contains the graph patterns that are matched against the data. 
 
