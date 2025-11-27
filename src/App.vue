@@ -102,7 +102,7 @@ const handleStepVisible = (id: number) => {
         <!-- Mobile View -->
         <div className="lg:hidden sticky top-16 z-40 -mx-4 sm:mx-0 mb-8 shadow-2xl">
           <div
-            className="bg-[#151928] border-b border-white/10 p-4 max-h-[30vh] overflow-auto custom-scrollbar"
+            className="bg-[#151928] border-b border-white/10 p-4 pl-0 max-h-[30vh] overflow-auto custom-scrollbar"
           >
             <CodeHighlighter
               :code="lessonData.code"

@@ -32,7 +32,7 @@ watch(
     <div
       v-for="(line, index) in lines"
       :key="index"
-      class="px-4 py-0.5 w-full transition-colors duration-300 flex"
+      class="px-1 lg:px-4 py-0.5 w-full transition-colors duration-300 flex"
       :class="
         isHighlighted(index)
           ? 'bg-primary/20 border-l-2 border-primary'
