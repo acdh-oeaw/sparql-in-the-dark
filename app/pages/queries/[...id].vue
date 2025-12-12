@@ -117,7 +117,7 @@ const children = computed(() => {
 						:content="step.content"
 						:is-active="activeStepId === step.id"
 						:is-last="index === lessonData.steps.length - 1"
-						:on-visible="handleStepVisible"
+						@visible="handleStepVisible"
 					/>
 				</div>
 			</div>
