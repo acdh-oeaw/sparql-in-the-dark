@@ -1,0 +1,97 @@
+//@esl
+
+import { defineTransformer } from "@nuxt/content";
+import { parseMarkdown } from "@nuxtjs/mdc/runtime";
+
+export interface ParsedStep {
+	id: number;
+	content: string;
+	highlightLines: Array<number>;
+}
+
+export interface LessonData {
+	title: string;
+	description: string;
+	code: string;
+	steps: Array<ParsedStep>;
+}
+
+const lessonTransformer = defineTransformer({
+	name: "lesson-transformer",
+	extensions: ["md", ".md"],
+	parse: async (rawContent, options) => {
+		const parsedContent = await parseMarkdown(rawContent.body, options);
+		// rawContent.
+
+		return {
+			...parsedContent,
+			id: rawContent.id,
+			rawContent: rawContent.body,
+		};
+	},
+	// The transform hook runs after parsing, before rendering
+	transform(document) {
+		const meta = document.data as Record<string, unknown>;
+		const raw = (document.rawContent ?? "---") as string;
+
+		// Only transform if it looks like a lesson
+		if (!raw.includes("---")) {
+			return { ...document, ...meta };
+		}
+
+		const sections = raw.split(/^---$/m);
+		const header = sections[0]!.trim();
+
+		const codeMatch = /```\w*\n([\s\S]*?)```/.exec(header);
+		const code = codeMatch ? codeMatch[1]!.trim() : "";
+
+		if (!codeMatch || codeMatch.length > 2) return { ...document, ...meta };
+
+		const steps: Array<ParsedStep> = [];
+
+		sections.slice(1).forEach((section, idx) => {
+			const highlightLines: Array<number> = [];
+
+			// extract highlight comment via regex
+			// eslint-disable-next-line regexp/no-super-linear-backtracking
+			const highlightMatch = /<!--\s*highlight:\s*([0-9\-, ]*)\s*-->/.exec(section);
+
+			if (highlightMatch?.[1]) {
+				highlightMatch[1]
+					.split(",")
+					.map((r) => r.trim())
+					.forEach((r) => {
+						const [start, end] = r.split("-").map((n) => parseInt(n, 10));
+
+						if (start && !Number.isNaN(start)) {
+							if (end && !Number.isNaN(end)) {
+								for (let i = start; i <= end; i++) {
+									highlightLines.push(i - 1);
+								}
+							} else {
+								highlightLines.push(start - 1);
+							}
+						}
+					});
+			}
+
+			const content = section.replace(/<!--\s*highlight:.*-->/, "").trim();
+
+			steps.push({
+				id: idx + 1,
+				content,
+				highlightLines,
+			});
+		});
+
+		// Attach structured lesson
+		const lesson = {
+			code,
+			steps,
+		};
+
+		return { ...document, ...meta, ...lesson };
+	},
+});
+
+export default lessonTransformer;

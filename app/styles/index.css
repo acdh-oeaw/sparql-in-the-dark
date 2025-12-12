@@ -1,0 +1,127 @@
+/* stylelint-disable custom-property-empty-line-before */
+/* stylelint-disable no-duplicate-selectors */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@plugin "@tailwindcss/typography";
+
+@custom-variant aria-current-page (&[aria-current="page"]);
+@custom-variant dark (&:where([data-ui-color-scheme="dark"], [data-ui-color-scheme="dark"] *));
+
+@layer base {
+	:root {
+		--_font-body: "Inter Variable";
+		--_font-mono: "Fira Code";
+	}
+
+	:root,
+	body {
+		block-size: 100%;
+	}
+
+	#__nuxt {
+		block-size: 100%;
+		isolation: isolate;
+	}
+
+	:root {
+		@apply bg-white font-body text-neutral-950 antialiased dark:bg-neutral-900 dark:text-white;
+
+		overflow-wrap: break-word;
+		font-synthesis: none;
+		text-rendering: optimizeLegibility;
+		text-size-adjust: none;
+		-webkit-tap-highlight-color: transparent;
+		interpolate-size: allow-keywords;
+	}
+
+	:root,
+	[data-ui-color-scheme="light"] {
+		color-scheme: light;
+	}
+
+	[data-ui-color-scheme="dark"] {
+		color-scheme: dark;
+	}
+
+	:focus {
+		/** Transparent outline. */
+		@apply outline-hidden;
+	}
+
+	:focus-visible {
+		@apply outline-2 outline-offset-2 outline-neutral-950 dark:outline-white;
+	}
+
+	:where(blockquote) {
+		@apply text-balance;
+	}
+
+	:where(h1, h2, h3, h4, h5, h6) {
+		@apply font-heading text-balance;
+	}
+
+	:where(iframe) {
+		border: 0;
+	}
+
+	:where(p) {
+		@apply text-pretty;
+	}
+
+	:where(table) {
+		font-variant-numeric: tabular-nums;
+	}
+
+	:where(textarea) {
+		field-sizing: content;
+		min-block-size: 3lh;
+	}
+
+	:where([id]) {
+		scroll-margin-block-start: 2ex;
+	}
+
+	:where([inert] ::-webkit-scrollbar) {
+		display: none;
+	}
+
+	/* stylelint-disable-next-line order/order */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::after,
+		*::before {
+			transition-duration: 0.01ms !important;
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			scroll-behavior: auto !important;
+		}
+	}
+}
+
+@theme {
+	--color-primary: #ffdf4d;
+	--color-dark: #101322;
+	--color-background-light: #f6f6f8;
+	--color-background-dark: #101322;
+	--color-surface-dark: #1e2235;
+}
+
+@theme inline {
+	--breakpoint-xs: 30rem;
+	--breakpoint-sm: 40rem;
+	--breakpoint-md: 48rem;
+	--breakpoint-lg: 64rem;
+	--breakpoint-xl: 80rem;
+	--breakpoint-2xl: 96rem;
+	--breakpoint-3xl: 120rem;
+
+	--font-body: var(--_font-body, ui-sans-serif), system-ui, sans-serif;
+	--font-heading: var(--_font-heading, var(--font-body));
+	--font-mono: var(--_font-mono, ui-monospace), monospace;
+}
+
+@utility container {
+	@apply mx-auto w-full max-w-7xl px-8;
+}
