@@ -87,7 +87,7 @@ export default defineNuxtConfig({
 	},
 	runtimeConfig: {
 		public: {
-			appBaseUrl: process.env.NUXT_PUBLIC_APP_BASE_URL,
+			appBaseUrl: process.env.NUXT_PUBLIC_APP_BASE_URL ?? "/sparql-in-the-dark/",
 			// bots: process.env.NUXT_PUBLIC_BOTS,
 			// googleSiteVerification: process.env.NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
 			// imprintServiceBaseUrl: process.env.NUXT_PUBLIC_IMPRINT_SERVICE_BASE_URL,
