@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 import { defaultLocale, files } from "./app/config/i18n.config";
 
-const baseUrl = process.env.NUXT_PUBLIC_APP_BASE_URL!;
+const baseUrl = process.env.NUXT_PUBLIC_APP_BASE_URL ?? "/sparql-in-the-dark/";
 
 export default defineNuxtConfig({
 	alias: {
