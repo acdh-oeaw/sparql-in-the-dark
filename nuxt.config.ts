@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 import { defaultLocale, files } from "./app/config/i18n.config";
 
-const baseUrl = process.env.NUXT_PUBLIC_APP_BASE_URL ?? "/sparql-in-the-dark/";
+const baseUrl = process.env.NUXT_PUBLIC_APP_BASE_URL!;
 
 export default defineNuxtConfig({
 	alias: {
@@ -14,6 +14,7 @@ export default defineNuxtConfig({
 	app: {
 		layoutTransition: false,
 		pageTransition: false,
+		baseURL: process.env.NUXT_APP_BASE_URL,
 	},
 	content: {
 		experimental: { nativeSqlite: true },
@@ -84,10 +85,11 @@ export default defineNuxtConfig({
 		prerender: {
 			// routes: ["/manifest.webmanifest", "/robots.txt", "/sitemap.xml"],
 		},
+		baseURL: process.env.NUXT_APP_BASE_URL,
 	},
 	runtimeConfig: {
 		public: {
-			appBaseUrl: process.env.NUXT_PUBLIC_APP_BASE_URL ?? "/sparql-in-the-dark/",
+			appBaseUrl: process.env.NUXT_PUBLIC_APP_BASE_URL,
 			// bots: process.env.NUXT_PUBLIC_BOTS,
 			// googleSiteVerification: process.env.NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
 			// imprintServiceBaseUrl: process.env.NUXT_PUBLIC_IMPRINT_SERVICE_BASE_URL,
