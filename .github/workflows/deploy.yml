@@ -30,7 +30,10 @@ jobs:
           else
             echo "No README changes"
           fi
-      - run: NUXT_PUBLIC_APP_BASE_URL=/sparql-in-the-dark/ npx nuxt build --preset github_pages
+      - name: Build site
+        env:
+          NUXT_PUBLIC_APP_BASE_URL: ${{ vars.NUXT_PUBLIC_APP_BASE_URL }}
+        run: npx nuxt build --preset github_pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
