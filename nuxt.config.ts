@@ -79,6 +79,7 @@ export default defineNuxtConfig({
 		"@nuxtjs/color-mode",
 		"@nuxtjs/i18n",
 		"@vueuse/nuxt",
+		"nuxt-shiki",
 	],
 	nitro: {
 		compressPublicAssets: true,
@@ -97,6 +98,9 @@ export default defineNuxtConfig({
 			// matomoId: process.env.NUXT_PUBLIC_MATOMO_ID,
 			// redmineId: process.env.NUXT_PUBLIC_REDMINE_ID,
 		},
+	},
+	shiki: {
+		defaultTheme: "github-dark",
 	},
 	ssr: false,
 	typescript: {

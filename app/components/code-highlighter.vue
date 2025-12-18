@@ -1,15 +1,4 @@
 <script setup lang="ts">
-import "highlight.js/styles/stackoverflow-light.css";
-import "highlightjs-sparql";
-
-import hljsVuePlugin from "@highlightjs/vue-plugin";
-import hljs from "highlight.js/lib/core";
-import javascript from "highlight.js/lib/languages/javascript";
-
-hljs.registerLanguage("javascript", javascript);
-
-const HLJSComponent = hljsVuePlugin.component;
-
 const props = defineProps<{
 	code: string;
 	activeLines: Array<number>;
@@ -20,12 +9,6 @@ const lines = computed(() => {
 function isHighlighted(line: number) {
 	return props.activeLines.includes(line);
 }
-watch(
-	() => props.code,
-	() => {
-		hljs.highlightAll();
-	},
-);
 </script>
 
 <template>
@@ -43,18 +26,13 @@ watch(
 			<span className="mr-4 inline-block w-8 shrink-0 text-right text-slate-600 select-none">
 				{{ index + 1 }}
 			</span>
-			<HLJSComponent :code="line" language="javascript"></HLJSComponent>
+			<Shiki :code="line" language="sparql"></Shiki>
 		</div>
 	</div>
 </template>
 
 <style>
-.hljs {
-	background: unset;
-	color: unset;
-}
-
-pre code.hljs {
-	padding: 0;
+pre code.shiki {
+	background-color: transparent !important;
 }
 </style>
