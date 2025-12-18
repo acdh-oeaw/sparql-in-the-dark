@@ -7,31 +7,19 @@ useSeoMeta({
 const { data: allLessons } = await useAsyncData(() => {
 	return queryCollection("queries").all();
 });
+
+const {data: intro} = await useAsyncData(() => {
+	return queryCollection("content").first()
+})
+
 </script>
 
 <template>
 	<MainContent class="mx-auto max-w-3xl py-20">
-		<div className="py-20 text-center">
-			<h1 className="mb-6 text-4xl leading-tight font-bold text-white md:text-5xl">
-				SPARQL in the Dark
-			</h1>
+		<div v-if="intro" id="intro" class="prose px-6 py-15 text-white lg:prose-lg">
 
-			<div className="text-left text-lg leading-relaxed text-slate-400 md:text-xl">
-				<p>
-					SPARQL in the Dark is a collection of practical SPARQL patterns and strategies for
-					exploring unknown Knowledge Graphs.
-				</p>
-				<p>
-					The patterns presented here treat SPARQL as a discovery tool for incrementally (and often
-					maieutically) revealing Knowledge Graph structure, entities, relationships, and modelling
-					conventions - i.e. the data shapes manifested in a given graph.
-				</p>
-				<p>
-					This repository provides reusable SPARQL query templates, methodological notes, as well as
-					examples and query strategies drawn from Digital Humanities datasets, but the patterns
-					generalize to any unfamiliar RDF graph.
-				</p>
-			</div>
+				<ContentRenderer :value="intro"></ContentRenderer>
+
 		</div>
 		<ul>
 			<li v-for="lesson in allLessons" :key="lesson.id" class="mb-8">
@@ -40,3 +28,25 @@ const { data: allLessons } = await useAsyncData(() => {
 		</ul>
 	</MainContent>
 </template>
+
+<style>
+
+	@reference "tailwindcss";
+
+	#intro h1{
+		@apply text-4xl leading-tight font-bold text-white text-center
+	}
+
+	#intro h1+p{
+		@apply  text-center mb-6
+	}
+
+	#intro h2{
+		@apply mb-4 text-2xl leading-tight font-bold text-white text-center
+	}
+
+	#intro strong, #intro a {
+		@apply text-white
+	}
+
+</style>

@@ -84,7 +84,7 @@ useHead({
 				type: "text/javascript",
 				innerHTML: createAnalyticsScript(
 					baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`,
-					env.public.matomoId,
+					String(env.public.matomoId),
 				),
 			});
 		}

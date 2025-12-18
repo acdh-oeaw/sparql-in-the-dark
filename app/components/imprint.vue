@@ -8,7 +8,7 @@ const locale = useLocale();
 const redmineId = env.public.redmineId;
 
 const url = createUrl({
-	baseUrl: env.public.imprintServiceBaseUrl,
+	baseUrl: String(env.public.imprintServiceBaseUrl),
 	pathname: `/${redmineId}`,
 	searchParams: createUrlSearchParams({ locale: locale.value }),
 });
