@@ -21,7 +21,6 @@ const lessonTransformer = defineTransformer({
 	extensions: ["md", ".md"],
 	parse: async (rawContent, options) => {
 		const parsedContent = await parseMarkdown(rawContent.body, options);
-		// rawContent.
 
 		return {
 			...parsedContent,
@@ -35,62 +34,68 @@ const lessonTransformer = defineTransformer({
 		const raw = (document.rawContent ?? "---") as string;
 
 		// Only transform if it looks like a lesson
-		if (!raw.includes("---")) {
+		if (!raw.includes("---") && !raw.includes("===")) {
 			return { ...document, ...meta };
 		}
 
-		const sections = raw.split(/^---$/m);
-		const header = sections[0]!.trim();
+		const chapters = raw.split(/^===$/m);
+		const mappedChapters = chapters.map((chapterRaw) => {
+			const sections = chapterRaw.split(/^---$/m);
+			const header = sections[0]!.trim();
 
-		const codeMatch = /```\w*\n([\s\S]*?)```/.exec(header);
-		const code = codeMatch ? codeMatch[1]!.trim() : "";
+			const codeMatch = /```\w*\n([\s\S]*?)```/.exec(header);
+			const code = codeMatch ? codeMatch[1]!.trim() : "";
 
-		if (!codeMatch || codeMatch.length > 2) return { ...document, ...meta };
+			if (!codeMatch || codeMatch.length > 2) return { ...document, ...meta };
 
-		const steps: Array<ParsedStep> = [];
+			const introText = header.replace(/```\w*\n[\s\S]*?```/, "")
 
-		sections.slice(1).forEach((section, idx) => {
-			const highlightLines: Array<number> = [];
+			const steps: Array<ParsedStep> = [];
 
-			// extract highlight comment via regex
-			// eslint-disable-next-line regexp/no-super-linear-backtracking
-			const highlightMatch = /<!--\s*highlight:\s*([0-9\-, ]*)\s*-->/.exec(section);
+			sections.slice(1).forEach((section, idx) => {
+				const highlightLines: Array<number> = [];
 
-			if (highlightMatch?.[1]) {
-				highlightMatch[1]
-					.split(",")
-					.map((r) => r.trim())
-					.forEach((r) => {
-						const [start, end] = r.split("-").map((n) => parseInt(n, 10));
+				// extract highlight comment via regex
+				// eslint-disable-next-line regexp/no-super-linear-backtracking
+				const highlightMatch = /<!--\s*highlight:\s*([0-9\-, ]*)\s*-->/.exec(section);
 
-						if (start && !Number.isNaN(start)) {
-							if (end && !Number.isNaN(end)) {
-								for (let i = start; i <= end; i++) {
-									highlightLines.push(i - 1);
+				if (highlightMatch?.[1]) {
+					highlightMatch[1]
+						.split(",")
+						.map((r) => r.trim())
+						.forEach((r) => {
+							const [start, end] = r.split("-").map((n) => parseInt(n, 10));
+
+							if (start && !Number.isNaN(start)) {
+								if (end && !Number.isNaN(end)) {
+									for (let i = start; i <= end; i++) {
+										highlightLines.push(i - 1);
+									}
+								} else {
+									highlightLines.push(start - 1);
 								}
-							} else {
-								highlightLines.push(start - 1);
 							}
-						}
-					});
-			}
+						});
+				}
 
-			const content = section.replace(/<!--\s*highlight:.*-->/, "").trim();
+				const content = section.replace(/<!--\s*highlight:.*-->/, "").trim();
 
-			steps.push({
-				id: idx + 1,
-				content,
-				highlightLines,
+				steps.push({
+					id: idx + 1,
+					content,
+					highlightLines,
+				});
 			});
+			// Attach structured lesson
+			const lesson = {
+				code,
+				steps,
+				intro: introText
+			};
+			return lesson;
 		});
 
-		// Attach structured lesson
-		const lesson = {
-			code,
-			steps,
-		};
-
-		return { ...document, ...meta, ...lesson };
+		return { ...document, ...meta, chapters: mappedChapters };
 	},
 });
 

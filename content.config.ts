@@ -11,16 +11,21 @@ export default defineContentConfig({
 			source: "queries/*.md",
 			schema: z
 				.object({
-					steps: z
-						.array(
-							z.object({
-								id: z.number(),
-								content: z.string(),
-								highlightLines: z.array(z.number()),
-							}),
-						)
-						.optional(),
-					code: z.string().optional(),
+					chapters: z.array(
+						z.object({
+							steps: z
+								.array(
+									z.object({
+										id: z.number(),
+										content: z.string(),
+										highlightLines: z.array(z.number()),
+									}),
+								)
+								.optional(),
+							code: z.string().optional(),
+							intro: z.string().optional(),
+						}),
+					),
 					title: z.string().nullable(),
 					description: z.string().nullable(),
 					rawbody: z.string(),
