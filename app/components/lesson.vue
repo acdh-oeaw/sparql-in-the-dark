@@ -29,7 +29,7 @@ const handleStepVisible = (id: number) => {
 <template>
 	<template v-if="lessonData && lessonData.code && lessonData.steps">
 		<div
-			class="mx-auto max-w-3xl py-20 text-center text-lg leading-relaxed text-slate-400 md:text-xl"
+			class="mx-auto max-w-3xl py-20 text-justify text-lg leading-relaxed text-slate-400 md:text-xl"
 		>
 			<VueMarkdownIt :source="lessonData.intro ?? ''" />
 		</div>
