@@ -1,10 +1,12 @@
 <script setup lang="ts">
+type CodeLanguage = "json" | "sparql" | "turtle" | "xml";
+
 const props = withDefaults(
 	defineProps<{
 		code: string;
 		activeLines?: Array<number>;
 		editable?: boolean;
-		language?: string;
+		language?: CodeLanguage;
 	}>(),
 	{
 		activeLines: () => {
@@ -18,8 +20,6 @@ const props = withDefaults(
 const emit = defineEmits<{ "update:code": [value: string] }>();
 
 const lines = computed(() => {
-	// Keep the raw value while editing so the highlight layer stays aligned with
-	// the textarea caret; trim only in the read-only presentation.
 	return (props.editable ? props.code : props.code.trim()).split("\n");
 });
 
@@ -59,7 +59,7 @@ function onKeydown(event: KeyboardEvent) {
 			<span class="mr-4 inline-block w-8 shrink-0 text-right text-slate-600 select-none">
 				{{ index + 1 }}
 			</span>
-			<Shiki :code="line" :language="language" />
+			<Shiki :code="line" :lang="language" />
 		</div>
 	</div>
 

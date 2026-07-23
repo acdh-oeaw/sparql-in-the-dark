@@ -100,6 +100,7 @@ export default defineNuxtConfig({
 		},
 	},
 	shiki: {
+		bundledLangs: ["sparql", "turtle", "json", "xml"],
 		defaultTheme: "github-dark",
 	},
 	ssr: false,

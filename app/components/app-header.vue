@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { GithubIcon,SparklesIcon } from "lucide-vue-next";
+import { GithubIcon, SparklesIcon } from "lucide-vue-next";
 
 // import type { NuxtLinkProps } from "#app";
 
@@ -23,7 +23,13 @@ import { GithubIcon,SparklesIcon } from "lucide-vue-next";
 
 			<h1 class="inline text-lg font-bold tracking-tight">SPARQL in the Dark</h1>
 		</NuxtLink>
-		<div class="flex items-center gap-4">
+		<div class="flex items-center gap-6">
+			<NuxtLink
+				class="text-sm font-medium text-slate-400 transition-colors hover:text-white aria-current-page:text-primary"
+				to="/playground"
+			>
+				Playground
+			</NuxtLink>
 			<a
 				class="text-slate-400 transition-colors hover:text-white"
 				href="https://github.com/acdh-oeaw/sparql-in-the-dark"
