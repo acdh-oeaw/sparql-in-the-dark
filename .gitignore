@@ -35,6 +35,7 @@ dist
 /playwright/.cache/
 /playwright-report/
 /test-results/
+.playwright-*
 
 # custom
 notes.org

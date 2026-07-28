@@ -5,6 +5,8 @@ import {
 	DatabaseIcon,
 	LoaderCircleIcon,
 	PlayIcon,
+	PlusIcon,
+	TagsIcon,
 	TriangleAlertIcon,
 } from "lucide-vue-next";
 
@@ -22,8 +24,33 @@ interface Example {
 	data?: string;
 	dataUrl?: string;
 	mediaType?: string;
+	prefixes: string;
 	query: string;
 }
+
+const commonPrefixes = [
+	// DBpedia
+	{ prefix: "dbo", iri: "http://dbpedia.org/ontology/" },
+	{ prefix: "dbr", iri: "http://dbpedia.org/resource/" },
+	{ prefix: "dbp", iri: "http://dbpedia.org/property/" },
+	// Wikidata
+	{ prefix: "wd", iri: "http://www.wikidata.org/entity/" },
+	{ prefix: "wdt", iri: "http://www.wikidata.org/prop/direct/" },
+	{ prefix: "p", iri: "http://www.wikidata.org/prop/" },
+	{ prefix: "ps", iri: "http://www.wikidata.org/prop/statement/" },
+	{ prefix: "pq", iri: "http://www.wikidata.org/prop/qualifier/" },
+	{ prefix: "wikibase", iri: "http://wikiba.se/ontology#" },
+	{ prefix: "bd", iri: "http://www.bigdata.com/rdf#" },
+	// Vocabularies
+	{ prefix: "rdf", iri: "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+	{ prefix: "rdfs", iri: "http://www.w3.org/2000/01/rdf-schema#" },
+	{ prefix: "owl", iri: "http://www.w3.org/2002/07/owl#" },
+	{ prefix: "skos", iri: "http://www.w3.org/2004/02/skos/core#" },
+	{ prefix: "xsd", iri: "http://www.w3.org/2001/XMLSchema#" },
+	{ prefix: "dcterms", iri: "http://purl.org/dc/terms/" },
+	{ prefix: "foaf", iri: "http://xmlns.com/foaf/0.1/" },
+	{ prefix: "schema", iri: "https://schema.org/" },
+] as const;
 
 const mediaTypes = [
 	{ label: "Turtle", value: "text/turtle", highlight: "turtle" },
@@ -86,11 +113,10 @@ const examples: Array<Example> = [
 		mode: "rdf",
 		mediaType: "text/turtle",
 		data: shakespeareData,
-		query: `PREFIX ex: <http://example.org/>
+		prefixes: `PREFIX ex: <http://example.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
-
-SELECT ?title ?genre ?year WHERE {
+PREFIX dcterms: <http://purl.org/dc/terms/>`,
+		query: `SELECT ?title ?genre ?year WHERE {
   ?work ex:author ex:Shakespeare ;
         rdfs:label ?title ;
         ex:genre ?genre ;
@@ -102,10 +128,9 @@ ORDER BY ?year`,
 		label: "Philosophers (DBpedia)",
 		mode: "endpoint",
 		source: "https://dbpedia.org/sparql",
-		query: `PREFIX dbo: <http://dbpedia.org/ontology/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT ?person ?name WHERE {
+		prefixes: `PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`,
+		query: `SELECT ?person ?name WHERE {
   ?person a dbo:Philosopher ;
           rdfs:label ?name .
   FILTER(LANG(?name) = "en")
@@ -116,11 +141,10 @@ LIMIT 20`,
 		label: "Cats (Wikidata)",
 		mode: "endpoint",
 		source: "https://query.wikidata.org/sparql",
-		query: `PREFIX wd: <http://www.wikidata.org/entity/>
+		prefixes: `PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT ?item ?label WHERE {
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`,
+		query: `SELECT ?item ?label WHERE {
   ?item wdt:P31 wd:Q146 ;
         rdfs:label ?label .
   FILTER(LANG(?label) = "en")
@@ -132,10 +156,9 @@ LIMIT 20`,
 		mode: "rdf",
 		mediaType: "text/turtle",
 		dataUrl: "/data/sample-data.ttl",
-		query: `PREFIX dbo: <http://dbpedia.org/ontology/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT ?city ?name ?population WHERE {
+		prefixes: `PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`,
+		query: `SELECT ?city ?name ?population WHERE {
   ?city a dbo:City ;
         rdfs:label ?name ;
         dbo:populationTotal ?population .
@@ -149,9 +172,31 @@ const sourceMode = ref<SourceMode>(examples[0]!.mode);
 const source = ref("https://dbpedia.org/sparql");
 const rdfData = ref(examples[0]!.data ?? "");
 const rdfMediaType = ref(examples[0]!.mediaType ?? "text/turtle");
+const prefixes = ref(examples[0]!.prefixes);
 const query = ref(examples[0]!.query);
 
-const isRdfCollapsed = ref(false);
+const isRdfCollapsed = ref(true);
+const isPrefixesCollapsed = ref(false);
+
+/** Appends every common prefix that isn't declared yet, so repeat clicks are a no-op. */
+function addCommonPrefixes() {
+	const declared = new Set(
+		[...prefixes.value.matchAll(/^\s*PREFIX\s+([^\s:]*):/gimu)].map((match) => {
+			return match[1];
+		}),
+	);
+	const missing = commonPrefixes.filter((entry) => {
+		return !declared.has(entry.prefix);
+	});
+	if (missing.length === 0) return;
+
+	const lines = missing.map((entry) => {
+		return `PREFIX ${entry.prefix}: <${entry.iri}>`;
+	});
+	const existing = prefixes.value.replace(/\s+$/u, "");
+	prefixes.value = existing ? `${existing}\n${lines.join("\n")}` : lines.join("\n");
+	isPrefixesCollapsed.value = false;
+}
 const isLoadingExample = ref(false);
 const exampleDataCache = new Map<string, string>();
 
@@ -216,7 +261,12 @@ async function runQuery() {
 						},
 					]
 				: [source.value.trim()];
-		const result = await comunica.query(query.value, { sources });
+		const fullQuery = [prefixes.value.trim(), query.value.trim()]
+			.filter((part) => {
+				return part.length > 0;
+			})
+			.join("\n\n");
+		const result = await comunica.query(fullQuery, { sources });
 
 		switch (result.resultType) {
 			case "bindings": {
@@ -300,6 +350,7 @@ async function loadExample(example: Example) {
 			rdfData.value = example.data ?? "";
 		}
 	}
+	prefixes.value = example.prefixes;
 	query.value = example.query;
 	resetResults();
 }
@@ -448,6 +499,55 @@ function onKeydown(event: KeyboardEvent) {
 					<p class="mt-2 font-mono text-xs text-slate-500">
 						Queried locally in your browser — no request leaves the page.
 					</p>
+				</div>
+			</div>
+
+			<!-- Prefixes -->
+			<div class="mb-6">
+				<div class="mb-2 flex items-center justify-between gap-4">
+					<button
+						:aria-expanded="!isPrefixesCollapsed"
+						class="flex items-center gap-2 font-mono text-xs tracking-widest text-slate-500 uppercase transition-colors hover:text-white"
+						type="button"
+						@click="isPrefixesCollapsed = !isPrefixesCollapsed"
+					>
+						<ChevronDownIcon
+							class="size-3.5 transition-transform"
+							:class="isPrefixesCollapsed ? '-rotate-90' : ''"
+						/>
+						<TagsIcon class="size-3.5" />
+						Prefixes
+					</button>
+					<button
+						class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-surface-dark/50 px-4 py-1.5 text-sm text-slate-300 transition-colors hover:border-primary/50 hover:text-white"
+						type="button"
+						@click="addCommonPrefixes"
+					>
+						<PlusIcon class="size-3.5" />
+						Add common prefixes
+					</button>
+				</div>
+				<div
+					v-show="!isPrefixesCollapsed"
+					class="overflow-hidden rounded-xl border border-white/10 bg-[#151928] shadow-2xl ring-1 shadow-black/50 ring-white/5"
+				>
+					<div
+						class="flex items-center justify-between border-b border-white/5 bg-[#1a1f30] px-4 py-3"
+					>
+						<div class="flex items-center gap-2">
+							<div class="size-3 rounded-full border border-red-500/50 bg-red-500/20"></div>
+							<div class="size-3 rounded-full border border-yellow-500/50 bg-yellow-500/20"></div>
+							<div class="size-3 rounded-full border border-green-500/50 bg-green-500/20"></div>
+						</div>
+						<div class="font-mono text-xs text-slate-500">prefixes.sparql</div>
+					</div>
+					<CodeHighlighter
+						v-model:code="prefixes"
+						class="max-h-[40vh] min-h-24 py-4"
+						editable
+						language="sparql"
+						@keydown="onKeydown"
+					/>
 				</div>
 			</div>
 
