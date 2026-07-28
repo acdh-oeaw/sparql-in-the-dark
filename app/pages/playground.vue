@@ -213,6 +213,8 @@ const errorMessage = ref<string | null>(null);
 const elapsed = ref<number | null>(null);
 
 type ResultKind = "bindings" | "boolean" | "quads";
+
+type ProjectedVariable = { value: string } | { variable: { value: string } };
 const resultKind = ref<ResultKind | null>(null);
 const columns = ref<Array<string>>([]);
 const rows = ref<Array<Record<string, string>>>([]);
@@ -270,20 +272,23 @@ async function runQuery() {
 
 		switch (result.resultType) {
 			case "bindings": {
+				// Take the columns from the query's projected variables, not from the
+				// bindings. Deriving them from the rows reorders the columns (the first
+				// row's iteration order wins, so `SELECT ?city ?name` can render as
+				// `name | city`) and silently drops any variable that never gets bound,
+				// such as an OPTIONAL that matches nothing.
+				const metadata = await result.metadata();
+				const columnOrder = (metadata.variables as Array<ProjectedVariable>).map((entry) => {
+					return "variable" in entry ? entry.variable.value : entry.value;
+				});
+
 				const stream = await result.execute();
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const bindings: Array<any> = await stream.toArray();
-				const seen = new Set<string>();
-				const columnOrder: Array<string> = [];
 				const parsedRows = bindings.map((binding) => {
 					const row: Record<string, string> = {};
 					for (const [variable, term] of binding) {
-						const key = variable.value;
-						if (!seen.has(key)) {
-							seen.add(key);
-							columnOrder.push(key);
-						}
-						row[key] = term.value;
+						row[variable.value] = term.value;
 					}
 					return row;
 				});
