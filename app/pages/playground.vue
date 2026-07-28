@@ -20,6 +20,7 @@ interface Example {
 	mode: SourceMode;
 	source?: string;
 	data?: string;
+	dataUrl?: string;
 	mediaType?: string;
 	query: string;
 }
@@ -126,6 +127,22 @@ SELECT ?item ?label WHERE {
 }
 LIMIT 20`,
 	},
+	{
+		label: "Austria (DBpedia dump)",
+		mode: "rdf",
+		mediaType: "text/turtle",
+		dataUrl: "/data/sample-data.ttl",
+		query: `PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?city ?name ?population WHERE {
+  ?city a dbo:City ;
+        rdfs:label ?name ;
+        dbo:populationTotal ?population .
+  FILTER(LANG(?name) = "en")
+}
+ORDER BY DESC(?population)`,
+	},
 ];
 
 const sourceMode = ref<SourceMode>(examples[0]!.mode);
@@ -135,6 +152,8 @@ const rdfMediaType = ref(examples[0]!.mediaType ?? "text/turtle");
 const query = ref(examples[0]!.query);
 
 const isRdfCollapsed = ref(false);
+const isLoadingExample = ref(false);
+const exampleDataCache = new Map<string, string>();
 
 const rdfHighlightLang = computed(() => {
 	return (
@@ -255,14 +274,31 @@ async function runQuery() {
 	}
 }
 
-function loadExample(example: Example) {
+async function loadExample(example: Example) {
 	sourceMode.value = example.mode;
 	if (example.mode === "endpoint") {
 		source.value = example.source ?? "";
 	} else {
-		rdfData.value = example.data ?? "";
 		rdfMediaType.value = example.mediaType ?? "text/turtle";
 		isRdfCollapsed.value = false;
+
+		if (example.dataUrl) {
+			const cached = exampleDataCache.get(example.dataUrl);
+			if (cached !== undefined) {
+				rdfData.value = cached;
+			} else {
+				isLoadingExample.value = true;
+				try {
+					const text = await $fetch<string>(example.dataUrl, { responseType: "text" });
+					exampleDataCache.set(example.dataUrl, text);
+					rdfData.value = text;
+				} finally {
+					isLoadingExample.value = false;
+				}
+			}
+		} else {
+			rdfData.value = example.data ?? "";
+		}
 	}
 	query.value = example.query;
 	resetResults();
@@ -293,7 +329,8 @@ function onKeydown(event: KeyboardEvent) {
 				<button
 					v-for="example in examples"
 					:key="example.label"
-					class="rounded-full border border-white/10 bg-surface-dark/50 px-4 py-1.5 text-sm text-slate-300 transition-colors hover:border-primary/50 hover:text-white"
+					class="rounded-full border border-white/10 bg-surface-dark/50 px-4 py-1.5 text-sm text-slate-300 transition-colors hover:border-primary/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+					:disabled="isLoadingExample"
 					type="button"
 					@click="loadExample(example)"
 				>
@@ -367,7 +404,7 @@ function onKeydown(event: KeyboardEvent) {
 						<DatabaseIcon class="size-3.5" />
 						RDF data
 					</button>
-					<label class="flex items-center gap-2">
+					<label v-show="!isRdfCollapsed" class="flex items-center gap-2">
 						<span class="font-mono text-xs tracking-widest text-slate-500 uppercase">Format</span>
 						<select
 							v-model="rdfMediaType"
@@ -393,7 +430,15 @@ function onKeydown(event: KeyboardEvent) {
 							</div>
 							<div class="font-mono text-xs text-slate-500">data</div>
 						</div>
+						<div
+							v-if="isLoadingExample"
+							class="flex min-h-48 items-center gap-2 p-6 text-sm text-slate-400"
+						>
+							<LoaderCircleIcon class="size-4 animate-spin" />
+							Loading example data…
+						</div>
 						<CodeHighlighter
+							v-else
 							v-model:code="rdfData"
 							class="max-h-[50vh] min-h-48 py-4"
 							editable
