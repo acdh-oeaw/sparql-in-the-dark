@@ -14,7 +14,7 @@ import { GithubIcon, SparklesIcon } from "lucide-vue-next";
 
 <template>
 	<header
-		class="fixed top-0 right-0 left-0 z-50 flex h-16 items-center justify-between border-b border-white/5 bg-background-dark/80 px-6 backdrop-blur-md lg:px-12"
+		class="fixed top-0 right-0 left-0 z-50 flex h-16 items-center justify-between border-b border-neutral-950/5 bg-background-light/80 px-6 backdrop-blur-md lg:px-12 dark:border-white/5 dark:bg-background-dark/80"
 	>
 		<NuxtLink class="flex items-center gap-3" to="/">
 			<div class="flex size-8 items-center justify-center rounded-lg bg-transparent text-primary">
@@ -25,13 +25,13 @@ import { GithubIcon, SparklesIcon } from "lucide-vue-next";
 		</NuxtLink>
 		<div class="flex items-center gap-6">
 			<NuxtLink
-				class="text-sm font-medium text-slate-400 transition-colors hover:text-white aria-current-page:text-primary"
+				class="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-950 dark:text-slate-400 dark:hover:text-white aria-current-page:text-amber-600 dark:aria-current-page:text-primary"
 				to="/playground"
 			>
 				Playground
 			</NuxtLink>
 			<a
-				class="text-slate-400 transition-colors hover:text-white"
+				class="text-neutral-600 transition-colors hover:text-neutral-950 dark:text-slate-400 dark:hover:text-white"
 				href="https://github.com/acdh-oeaw/sparql-in-the-dark"
 				rel="noreferrer"
 				target="_blank"
@@ -39,6 +39,7 @@ import { GithubIcon, SparklesIcon } from "lucide-vue-next";
 				<GithubIcon class="size-5" />
 				<span class="sr-only">Check out our Github repository</span>
 			</a>
+			<ColorSchemeSwitcher />
 		</div>
 	</header>
 </template>

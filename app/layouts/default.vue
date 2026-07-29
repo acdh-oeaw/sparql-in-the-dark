@@ -96,7 +96,7 @@ useHead({
 
 <template>
 	<div
-		class="min-h-screen bg-background-dark text-white selection:bg-primary/30 selection:text-white"
+		class="min-h-screen bg-background-light text-neutral-950 selection:bg-primary/30 selection:text-neutral-950 dark:bg-background-dark dark:text-white dark:selection:text-white"
 	>
 		<SkipLink target-id="main-content">
 			{{ t("DefaultLayout.skip-to-main-content") }}

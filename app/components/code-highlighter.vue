@@ -53,10 +53,12 @@ function onKeydown(event: KeyboardEvent) {
 			:class="
 				isHighlighted(index)
 					? 'border-l-2 border-primary bg-primary/20'
-					: 'border-l-2 border-transparent hover:bg-white/5'
+					: 'border-l-2 border-transparent hover:bg-neutral-950/5 dark:hover:bg-white/5'
 			"
 		>
-			<span class="mr-4 inline-block w-8 shrink-0 text-right text-slate-600 select-none">
+			<span
+				class="mr-4 inline-block w-8 shrink-0 text-right text-neutral-400 select-none dark:text-slate-600"
+			>
 				{{ index + 1 }}
 			</span>
 			<Shiki :code="line" :lang="language" />
@@ -66,7 +68,9 @@ function onKeydown(event: KeyboardEvent) {
 	<div v-else class="grid overflow-auto font-mono text-sm leading-6">
 		<div aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 select-none">
 			<div v-for="(line, index) in lines" :key="index" class="flex w-full px-1 lg:px-4">
-				<span class="mr-4 inline-block w-8 shrink-0 text-right text-slate-600 select-none">
+				<span
+					class="mr-4 inline-block w-8 shrink-0 text-right text-neutral-400 select-none dark:text-slate-600"
+				>
 					{{ index + 1 }}
 				</span>
 				<Shiki :code="line.length ? line : ' '" :language="language" />
@@ -76,7 +80,7 @@ function onKeydown(event: KeyboardEvent) {
 			aria-label="Code editor"
 			autocapitalize="off"
 			autocomplete="off"
-			class="col-start-1 row-start-1 w-full resize-none overflow-hidden bg-transparent pr-1 pl-13 leading-6 whitespace-pre text-transparent caret-white outline-none lg:pr-4 lg:pl-16"
+			class="col-start-1 row-start-1 w-full resize-none overflow-hidden bg-transparent pr-1 pl-13 leading-6 whitespace-pre text-transparent caret-neutral-950 outline-none lg:pr-4 lg:pl-16 dark:caret-white"
 			spellcheck="false"
 			:value="code"
 			wrap="off"

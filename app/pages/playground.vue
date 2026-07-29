@@ -372,8 +372,10 @@ function onKeydown(event: KeyboardEvent) {
 	<MainContent>
 		<div class="mx-auto max-w-5xl">
 			<div class="mb-10">
-				<h1 class="mb-3 text-4xl font-bold text-white md:text-5xl">Playground</h1>
-				<p class="text-lg text-slate-400 md:text-xl">
+				<h1 class="mb-3 text-4xl font-bold text-neutral-950 md:text-5xl dark:text-white">
+					Playground
+				</h1>
+				<p class="text-lg text-neutral-600 md:text-xl dark:text-slate-400">
 					Run your own SPARQL queries against a remote endpoint or over an RDF document you paste in
 					yourself.
 				</p>
@@ -381,11 +383,14 @@ function onKeydown(event: KeyboardEvent) {
 
 			<!-- Examples -->
 			<div class="mb-6 flex flex-wrap items-center gap-3">
-				<span class="font-mono text-xs tracking-widest text-slate-500 uppercase">Examples</span>
+				<span
+					class="font-mono text-xs tracking-widest text-neutral-500 uppercase dark:text-slate-500"
+					>Examples</span
+				>
 				<button
 					v-for="example in examples"
 					:key="example.label"
-					class="rounded-full border border-white/10 bg-surface-dark/50 px-4 py-1.5 text-sm text-slate-300 transition-colors hover:border-primary/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+					class="rounded-full border border-neutral-200 bg-neutral-100 px-4 py-1.5 text-sm text-neutral-700 transition-colors hover:border-primary/50 hover:text-neutral-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-surface-dark/50 dark:text-slate-300 dark:hover:text-white"
 					:disabled="isLoadingExample"
 					type="button"
 					@click="loadExample(example)"
@@ -396,16 +401,20 @@ function onKeydown(event: KeyboardEvent) {
 
 			<!-- Source mode -->
 			<div class="mb-6">
-				<span class="mb-2 block font-mono text-xs tracking-widest text-slate-500 uppercase">
+				<span
+					class="mb-2 block font-mono text-xs tracking-widest text-neutral-500 uppercase dark:text-slate-500"
+				>
 					Data source
 				</span>
-				<div class="inline-flex rounded-lg border border-white/10 bg-surface-dark/50 p-1">
+				<div
+					class="inline-flex rounded-lg border border-neutral-200 bg-neutral-100 p-1 dark:border-white/10 dark:bg-surface-dark/50"
+				>
 					<button
 						class="rounded-md px-4 py-1.5 text-sm font-medium transition-colors"
 						:class="
 							sourceMode === 'endpoint'
 								? 'bg-primary text-background-dark'
-								: 'text-slate-400 hover:text-white'
+								: 'text-neutral-600 hover:text-neutral-950 dark:text-slate-400 dark:hover:text-white'
 						"
 						type="button"
 						@click="sourceMode = 'endpoint'"
@@ -417,7 +426,7 @@ function onKeydown(event: KeyboardEvent) {
 						:class="
 							sourceMode === 'rdf'
 								? 'bg-primary text-background-dark'
-								: 'text-slate-400 hover:text-white'
+								: 'text-neutral-600 hover:text-neutral-950 dark:text-slate-400 dark:hover:text-white'
 						"
 						type="button"
 						@click="sourceMode = 'rdf'"
@@ -430,14 +439,14 @@ function onKeydown(event: KeyboardEvent) {
 			<!-- Endpoint -->
 			<label v-if="sourceMode === 'endpoint'" class="mb-6 block">
 				<span
-					class="mb-2 flex items-center gap-2 font-mono text-xs tracking-widest text-slate-500 uppercase"
+					class="mb-2 flex items-center gap-2 font-mono text-xs tracking-widest text-neutral-500 uppercase dark:text-slate-500"
 				>
 					<DatabaseIcon class="size-3.5" />
 					Endpoint
 				</span>
 				<input
 					v-model="source"
-					class="w-full rounded-xl border border-white/10 bg-[#151928] px-4 py-3 font-mono text-sm text-slate-200 transition-colors outline-none placeholder:text-slate-600 focus:border-primary/50"
+					class="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 font-mono text-sm text-neutral-800 transition-colors outline-none placeholder:text-neutral-400 focus:border-primary/50 dark:border-white/10 dark:bg-[#151928] dark:text-slate-200 dark:placeholder:text-slate-600"
 					placeholder="https://dbpedia.org/sparql"
 					spellcheck="false"
 					type="url"
@@ -449,7 +458,7 @@ function onKeydown(event: KeyboardEvent) {
 				<div class="mb-2 flex items-center justify-between gap-4">
 					<button
 						:aria-expanded="!isRdfCollapsed"
-						class="flex items-center gap-2 font-mono text-xs tracking-widest text-slate-500 uppercase transition-colors hover:text-white"
+						class="flex items-center gap-2 font-mono text-xs tracking-widest text-neutral-500 uppercase transition-colors hover:text-neutral-950 dark:text-slate-500 dark:hover:text-white"
 						type="button"
 						@click="isRdfCollapsed = !isRdfCollapsed"
 					>
@@ -461,10 +470,13 @@ function onKeydown(event: KeyboardEvent) {
 						RDF data
 					</button>
 					<label v-show="!isRdfCollapsed" class="flex items-center gap-2">
-						<span class="font-mono text-xs tracking-widest text-slate-500 uppercase">Format</span>
+						<span
+							class="font-mono text-xs tracking-widest text-neutral-500 uppercase dark:text-slate-500"
+							>Format</span
+						>
 						<select
 							v-model="rdfMediaType"
-							class="rounded-lg border border-white/10 bg-surface-dark px-3 py-1.5 text-sm text-slate-200 outline-none focus:border-primary/50"
+							class="rounded-lg border border-neutral-200 bg-neutral-100 px-3 py-1.5 text-sm text-neutral-800 outline-none focus:border-primary/50 dark:border-white/10 dark:bg-surface-dark dark:text-slate-200"
 						>
 							<option v-for="type in mediaTypes" :key="type.value" :value="type.value">
 								{{ type.label }}
@@ -474,21 +486,21 @@ function onKeydown(event: KeyboardEvent) {
 				</div>
 				<div v-show="!isRdfCollapsed">
 					<div
-						class="overflow-hidden rounded-xl border border-white/10 bg-[#151928] shadow-2xl ring-1 shadow-black/50 ring-white/5"
+						class="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 shadow-2xl ring-1 shadow-neutral-950/10 ring-neutral-950/5 dark:border-white/10 dark:bg-[#151928] dark:shadow-black/50 dark:ring-white/5"
 					>
 						<div
-							class="flex items-center justify-between border-b border-white/5 bg-[#1a1f30] px-4 py-3"
+							class="flex items-center justify-between border-b border-neutral-200 bg-neutral-100 px-4 py-3 dark:border-white/5 dark:bg-[#1a1f30]"
 						>
 							<div class="flex items-center gap-2">
 								<div class="size-3 rounded-full border border-red-500/50 bg-red-500/20"></div>
 								<div class="size-3 rounded-full border border-yellow-500/50 bg-yellow-500/20"></div>
 								<div class="size-3 rounded-full border border-green-500/50 bg-green-500/20"></div>
 							</div>
-							<div class="font-mono text-xs text-slate-500">data</div>
+							<div class="font-mono text-xs text-neutral-500 dark:text-slate-500">data</div>
 						</div>
 						<div
 							v-if="isLoadingExample"
-							class="flex min-h-48 items-center gap-2 p-6 text-sm text-slate-400"
+							class="flex min-h-48 items-center gap-2 p-6 text-sm text-neutral-600 dark:text-slate-400"
 						>
 							<LoaderCircleIcon class="size-4 animate-spin" />
 							Loading example data…
@@ -501,7 +513,7 @@ function onKeydown(event: KeyboardEvent) {
 							:language="rdfHighlightLang"
 						/>
 					</div>
-					<p class="mt-2 font-mono text-xs text-slate-500">
+					<p class="mt-2 font-mono text-xs text-neutral-500 dark:text-slate-500">
 						Queried locally in your browser — no request leaves the page.
 					</p>
 				</div>
@@ -512,7 +524,7 @@ function onKeydown(event: KeyboardEvent) {
 				<div class="mb-2 flex items-center justify-between gap-4">
 					<button
 						:aria-expanded="!isPrefixesCollapsed"
-						class="flex items-center gap-2 font-mono text-xs tracking-widest text-slate-500 uppercase transition-colors hover:text-white"
+						class="flex items-center gap-2 font-mono text-xs tracking-widest text-neutral-500 uppercase transition-colors hover:text-neutral-950 dark:text-slate-500 dark:hover:text-white"
 						type="button"
 						@click="isPrefixesCollapsed = !isPrefixesCollapsed"
 					>
@@ -524,7 +536,7 @@ function onKeydown(event: KeyboardEvent) {
 						Prefixes
 					</button>
 					<button
-						class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-surface-dark/50 px-4 py-1.5 text-sm text-slate-300 transition-colors hover:border-primary/50 hover:text-white"
+						class="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-100 px-4 py-1.5 text-sm text-neutral-700 transition-colors hover:border-primary/50 hover:text-neutral-950 dark:border-white/10 dark:bg-surface-dark/50 dark:text-slate-300 dark:hover:text-white"
 						type="button"
 						@click="addCommonPrefixes"
 					>
@@ -534,17 +546,19 @@ function onKeydown(event: KeyboardEvent) {
 				</div>
 				<div
 					v-show="!isPrefixesCollapsed"
-					class="overflow-hidden rounded-xl border border-white/10 bg-[#151928] shadow-2xl ring-1 shadow-black/50 ring-white/5"
+					class="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 shadow-2xl ring-1 shadow-neutral-950/10 ring-neutral-950/5 dark:border-white/10 dark:bg-[#151928] dark:shadow-black/50 dark:ring-white/5"
 				>
 					<div
-						class="flex items-center justify-between border-b border-white/5 bg-[#1a1f30] px-4 py-3"
+						class="flex items-center justify-between border-b border-neutral-200 bg-neutral-100 px-4 py-3 dark:border-white/5 dark:bg-[#1a1f30]"
 					>
 						<div class="flex items-center gap-2">
 							<div class="size-3 rounded-full border border-red-500/50 bg-red-500/20"></div>
 							<div class="size-3 rounded-full border border-yellow-500/50 bg-yellow-500/20"></div>
 							<div class="size-3 rounded-full border border-green-500/50 bg-green-500/20"></div>
 						</div>
-						<div class="font-mono text-xs text-slate-500">prefixes.sparql</div>
+						<div class="font-mono text-xs text-neutral-500 dark:text-slate-500">
+							prefixes.sparql
+						</div>
 					</div>
 					<CodeHighlighter
 						v-model:code="prefixes"
@@ -558,17 +572,17 @@ function onKeydown(event: KeyboardEvent) {
 
 			<!-- Query editor -->
 			<div
-				class="overflow-hidden rounded-xl border border-white/10 bg-[#151928] shadow-2xl ring-1 shadow-black/50 ring-white/5"
+				class="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 shadow-2xl ring-1 shadow-neutral-950/10 ring-neutral-950/5 dark:border-white/10 dark:bg-[#151928] dark:shadow-black/50 dark:ring-white/5"
 			>
 				<div
-					class="flex items-center justify-between border-b border-white/5 bg-[#1a1f30] px-4 py-3"
+					class="flex items-center justify-between border-b border-neutral-200 bg-neutral-100 px-4 py-3 dark:border-white/5 dark:bg-[#1a1f30]"
 				>
 					<div class="flex items-center gap-2">
 						<div class="size-3 rounded-full border border-red-500/50 bg-red-500/20"></div>
 						<div class="size-3 rounded-full border border-yellow-500/50 bg-yellow-500/20"></div>
 						<div class="size-3 rounded-full border border-green-500/50 bg-green-500/20"></div>
 					</div>
-					<div class="font-mono text-xs text-slate-500">query.sparql</div>
+					<div class="font-mono text-xs text-neutral-500 dark:text-slate-500">query.sparql</div>
 				</div>
 				<CodeHighlighter
 					v-model:code="query"
@@ -591,12 +605,22 @@ function onKeydown(event: KeyboardEvent) {
 					<PlayIcon v-else class="size-4" />
 					{{ isRunning ? "Running…" : "Run query" }}
 				</button>
-				<span class="font-mono text-xs text-slate-500">
-					<kbd class="rounded-sm border border-white/10 bg-surface-dark px-1.5 py-0.5">Ctrl</kbd> +
-					<kbd class="rounded-sm border border-white/10 bg-surface-dark px-1.5 py-0.5">Enter</kbd>
+				<span class="font-mono text-xs text-neutral-500 dark:text-slate-500">
+					<kbd
+						class="rounded-sm border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 dark:border-white/10 dark:bg-surface-dark"
+						>Ctrl</kbd
+					>
+					+
+					<kbd
+						class="rounded-sm border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 dark:border-white/10 dark:bg-surface-dark"
+						>Enter</kbd
+					>
 					to run
 				</span>
-				<span v-if="elapsed !== null && !isRunning" class="font-mono text-xs text-slate-500">
+				<span
+					v-if="elapsed !== null && !isRunning"
+					class="font-mono text-xs text-neutral-500 dark:text-slate-500"
+				>
 					{{ elapsed }} ms
 				</span>
 			</div>
@@ -604,33 +628,41 @@ function onKeydown(event: KeyboardEvent) {
 			<!-- Error -->
 			<div
 				v-if="errorMessage"
-				class="mt-8 flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-5 text-sm text-red-200"
+				class="mt-8 flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-5 text-sm text-red-800 dark:text-red-200"
 			>
-				<TriangleAlertIcon class="mt-0.5 size-5 shrink-0 text-red-400" />
+				<TriangleAlertIcon class="mt-0.5 size-5 shrink-0 text-red-600 dark:text-red-400" />
 				<div>
-					<p class="mb-1 font-semibold text-red-300">Query failed</p>
+					<p class="mb-1 font-semibold text-red-700 dark:text-red-300">Query failed</p>
 					<p class="font-mono wrap-break-word whitespace-pre-wrap">{{ errorMessage }}</p>
 				</div>
 			</div>
 
 			<!-- Results -->
 			<div v-if="resultKind && !errorMessage" class="mt-8">
-				<h2 class="mb-4 font-mono text-xs tracking-widest text-slate-500 uppercase">Results</h2>
+				<h2
+					class="mb-4 font-mono text-xs tracking-widest text-neutral-500 uppercase dark:text-slate-500"
+				>
+					Results
+				</h2>
 
 				<!-- SELECT -->
 				<div
 					v-if="resultKind === 'bindings'"
-					class="overflow-hidden rounded-xl border border-white/10 bg-surface-dark/50"
+					class="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 dark:border-white/10 dark:bg-surface-dark/50"
 				>
-					<div v-if="rows.length === 0" class="p-6 text-slate-400">The query returned no rows.</div>
+					<div v-if="rows.length === 0" class="p-6 text-neutral-600 dark:text-slate-400">
+						The query returned no rows.
+					</div>
 					<div v-else class="overflow-x-auto">
 						<table class="w-full border-collapse text-left text-sm">
 							<thead>
-								<tr class="border-b border-white/10 bg-[#1a1f30]">
+								<tr
+									class="border-b border-neutral-200 bg-neutral-100 dark:border-white/10 dark:bg-[#1a1f30]"
+								>
 									<th
 										v-for="column in columns"
 										:key="column"
-										class="px-4 py-3 font-mono text-xs tracking-wider text-primary"
+										class="px-4 py-3 font-mono text-xs tracking-wider text-amber-600 dark:text-primary"
 									>
 										{{ column }}
 									</th>
@@ -640,12 +672,12 @@ function onKeydown(event: KeyboardEvent) {
 								<tr
 									v-for="(row, index) in rows"
 									:key="index"
-									class="border-b border-white/5 transition-colors last:border-0 hover:bg-white/5"
+									class="border-b border-neutral-950/5 transition-colors last:border-0 hover:bg-neutral-950/5 dark:border-white/5 dark:hover:bg-white/5"
 								>
 									<td
 										v-for="column in columns"
 										:key="column"
-										class="max-w-md truncate px-4 py-3 font-mono text-slate-300"
+										class="max-w-md truncate px-4 py-3 font-mono text-neutral-700 dark:text-slate-300"
 										:title="row[column] ?? ''"
 									>
 										<a
@@ -662,7 +694,7 @@ function onKeydown(event: KeyboardEvent) {
 					</div>
 					<div
 						v-if="rows.length > 0"
-						class="border-t border-white/10 px-4 py-2 font-mono text-xs text-slate-500"
+						class="border-t border-neutral-200 px-4 py-2 font-mono text-xs text-neutral-500 dark:border-white/10 dark:text-slate-500"
 					>
 						{{ rows.length }} row{{ rows.length === 1 ? "" : "s" }}
 					</div>
@@ -671,11 +703,15 @@ function onKeydown(event: KeyboardEvent) {
 				<!-- ASK -->
 				<div
 					v-else-if="resultKind === 'boolean'"
-					class="rounded-xl border border-white/10 bg-surface-dark/50 p-6"
+					class="rounded-xl border border-neutral-200 bg-neutral-50 p-6 dark:border-white/10 dark:bg-surface-dark/50"
 				>
 					<span
 						class="inline-flex items-center gap-2 rounded-lg px-4 py-2 font-mono text-lg font-bold"
-						:class="booleanResult ? 'bg-green-500/15 text-green-300' : 'bg-red-500/15 text-red-300'"
+						:class="
+							booleanResult
+								? 'bg-green-500/15 text-green-700 dark:text-green-300'
+								: 'bg-red-500/15 text-red-700 dark:text-red-300'
+						"
 					>
 						{{ booleanResult }}
 					</span>
@@ -684,40 +720,54 @@ function onKeydown(event: KeyboardEvent) {
 				<!-- CONSTRUCT / DESCRIBE -->
 				<div
 					v-else-if="resultKind === 'quads'"
-					class="overflow-hidden rounded-xl border border-white/10 bg-surface-dark/50"
+					class="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 dark:border-white/10 dark:bg-surface-dark/50"
 				>
-					<div v-if="quads.length === 0" class="p-6 text-slate-400">
+					<div v-if="quads.length === 0" class="p-6 text-neutral-600 dark:text-slate-400">
 						The query returned no triples.
 					</div>
 					<div v-else class="overflow-x-auto">
 						<table class="w-full border-collapse text-left text-sm">
 							<thead>
-								<tr class="border-b border-white/10 bg-[#1a1f30]">
-									<th class="px-4 py-3 font-mono text-xs tracking-wider text-primary">subject</th>
-									<th class="px-4 py-3 font-mono text-xs tracking-wider text-primary">predicate</th>
-									<th class="px-4 py-3 font-mono text-xs tracking-wider text-primary">object</th>
+								<tr
+									class="border-b border-neutral-200 bg-neutral-100 dark:border-white/10 dark:bg-[#1a1f30]"
+								>
+									<th
+										class="px-4 py-3 font-mono text-xs tracking-wider text-amber-600 dark:text-primary"
+									>
+										subject
+									</th>
+									<th
+										class="px-4 py-3 font-mono text-xs tracking-wider text-amber-600 dark:text-primary"
+									>
+										predicate
+									</th>
+									<th
+										class="px-4 py-3 font-mono text-xs tracking-wider text-amber-600 dark:text-primary"
+									>
+										object
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr
 									v-for="(quad, index) in quads"
 									:key="index"
-									class="border-b border-white/5 transition-colors last:border-0 hover:bg-white/5"
+									class="border-b border-neutral-950/5 transition-colors last:border-0 hover:bg-neutral-950/5 dark:border-white/5 dark:hover:bg-white/5"
 								>
 									<td
-										class="max-w-xs truncate px-4 py-3 font-mono text-slate-300"
+										class="max-w-xs truncate px-4 py-3 font-mono text-neutral-700 dark:text-slate-300"
 										:title="quad.subject"
 									>
 										{{ quad.subject }}
 									</td>
 									<td
-										class="max-w-xs truncate px-4 py-3 font-mono text-slate-300"
+										class="max-w-xs truncate px-4 py-3 font-mono text-neutral-700 dark:text-slate-300"
 										:title="quad.predicate"
 									>
 										{{ quad.predicate }}
 									</td>
 									<td
-										class="max-w-xs truncate px-4 py-3 font-mono text-slate-300"
+										class="max-w-xs truncate px-4 py-3 font-mono text-neutral-700 dark:text-slate-300"
 										:title="quad.object"
 									>
 										{{ quad.object }}
@@ -728,16 +778,16 @@ function onKeydown(event: KeyboardEvent) {
 					</div>
 					<div
 						v-if="quads.length > 0"
-						class="border-t border-white/10 px-4 py-2 font-mono text-xs text-slate-500"
+						class="border-t border-neutral-200 px-4 py-2 font-mono text-xs text-neutral-500 dark:border-white/10 dark:text-slate-500"
 					>
 						{{ quads.length }} triple{{ quads.length === 1 ? "" : "s" }}
 					</div>
 				</div>
 			</div>
-			<p class="float-right text-sm text-slate-400">
+			<p class="float-right text-sm text-neutral-600 dark:text-slate-400">
 				Query engine powered by
 				<a
-					class="text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:decoration-primary"
+					class="text-amber-600 underline decoration-amber-600/40 underline-offset-4 transition-colors hover:decoration-amber-600 dark:text-primary dark:decoration-primary/40 dark:hover:decoration-primary"
 					href="https://comunica.dev/"
 					rel="noreferrer"
 					target="_blank"

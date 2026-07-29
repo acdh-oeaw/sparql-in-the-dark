@@ -105,6 +105,7 @@
 	--color-dark: #101322;
 	--color-background-light: #f6f6f8;
 	--color-background-dark: #101322;
+	--color-surface-light: #fff;
 	--color-surface-dark: #1e2235;
 }
 
@@ -124,4 +125,12 @@
 
 @utility container {
 	@apply mx-auto w-full max-w-7xl px-8;
+}
+
+@layer base {
+	/** Shiki emits dual-theme tokens as inline styles (`color` for light, `--shiki-dark` for dark). */
+	[data-ui-color-scheme="dark"] .shiki,
+	[data-ui-color-scheme="dark"] .shiki span {
+		color: var(--shiki-dark) !important;
+	}
 }

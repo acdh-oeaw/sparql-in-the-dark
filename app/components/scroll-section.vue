@@ -50,25 +50,27 @@ onMounted(() => {
 			:class="[
 				'relative rounded-2xl border p-8 backdrop-blur-sm transition-all duration-500',
 				props.isActive
-					? 'translate-x-0 border-primary/50 bg-surface-dark opacity-100 shadow-lg shadow-primary/10'
-					: 'translate-x-4 border-white/5 bg-surface-dark/50 opacity-40 grayscale',
+					? 'translate-x-0 border-primary/50 bg-surface-light opacity-100 shadow-lg shadow-primary/10 dark:bg-surface-dark'
+					: 'translate-x-4 border-neutral-950/5 bg-surface-light/50 opacity-40 grayscale dark:border-white/5 dark:bg-surface-dark/50',
 			]"
 		>
 			<!-- Step Number Badge -->
 			<div
 				:class="[
 					'absolute -top-4 -left-4 flex size-10 items-center justify-center rounded-full text-lg font-bold shadow-lg transition-colors duration-300',
-					props.isActive ? 'bg-primary text-dark' : 'bg-slate-700 text-slate-400',
+					props.isActive
+						? 'bg-primary text-dark'
+						: 'bg-neutral-300 text-neutral-600 dark:bg-slate-700 dark:text-slate-400',
 				]"
 			>
 				{{ props.id }}
 			</div>
-			<div class="prose max-w-none prose-invert">
+			<div class="prose max-w-none dark:prose-invert">
 				<VueMarkdownIt :source="props.content" />
 			</div>
 			<div
 				v-if="props.isActive && props.isLast"
-				class="mt-8 flex justify-center border-t border-white/10 pt-4"
+				class="mt-8 flex justify-center border-t border-neutral-950/10 pt-4 dark:border-white/10"
 			>
 				<NuxtLink
 					class="group flex items-center gap-2 rounded-full bg-primary px-6 py-2 font-medium text-dark transition-colors hover:bg-primary/90"
