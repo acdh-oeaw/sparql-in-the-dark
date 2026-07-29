@@ -125,17 +125,20 @@ PREFIX dcterms: <http://purl.org/dc/terms/>`,
 ORDER BY ?year`,
 	},
 	{
-		label: "Philosophers (DBpedia)",
+		label: "Things in Austria (DBpedia)",
 		mode: "endpoint",
 		source: "https://dbpedia.org/sparql",
 		prefixes: `PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX dbr: <http://dbpedia.org/resource/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`,
-		query: `SELECT ?person ?name WHERE {
-  ?person a dbo:Philosopher ;
-          rdfs:label ?name .
-  FILTER(LANG(?name) = "en")
+		query: `SELECT ?thing ?name
+WHERE  {
+	?thing dbo:country dbr:Austria ;
+		rdfs:label  ?name  .
+	FILTER(lang(?name) = "en" )
 }
-LIMIT 20`,
+LIMIT 5
+`,
 	},
 	{
 		label: "Cats (Wikidata)",
