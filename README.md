@@ -19,7 +19,7 @@ This repository provides reusable SPARQL query templates, methodological notes, 
 ## Introduction to SPARQL Queries
 Welcome! This lesson will guide you through the fundamental structure of a SPARQL query. Scroll down to begin and see how queries are built, piece by piece.
 
-```sparql
+```sparql playground=wikidata
 ## Find all countries and their capitals
 
 PREFIX wd: <http://www.wikidata.org/entity/>
@@ -335,7 +335,7 @@ See [Property Paths](https://www.w3.org/TR/sparql12-query/#propertypaths) in the
 Another useful pattern for exploring an unknown graph is to query for actual class usage. The following snippet retrieves all classes that have instances and orders classes by the count of instances.
 
 
-```sparql
+```sparql playground=dbpedia_dump
 select distinct ?class (count(?instance) as ?instance_count)
 where {
 	?instance a ?class
