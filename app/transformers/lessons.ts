@@ -3,6 +3,8 @@
 import { defineTransformer } from "@nuxt/content";
 import { parseMarkdown } from "@nuxtjs/mdc/runtime";
 
+import { getPlaygroundExample } from "../utils/playground";
+
 export interface ParsedStep {
 	id: number;
 	content: string;
@@ -43,12 +45,16 @@ const lessonTransformer = defineTransformer({
 			const sections = chapterRaw.split(/^---$/m);
 			const header = sections[0]!.trim();
 
-			const codeMatch = /```\w*\n([\s\S]*?)```/.exec(header);
+			const codeMatch = /```[^\n]*\n([\s\S]*?)```/.exec(header);
 			const code = codeMatch ? codeMatch[1]!.trim() : "";
 
 			if (!codeMatch || codeMatch.length > 2) return { ...document, ...meta };
 
-			const introText = header.replace(/```\w*\n[\s\S]*?```/, "")
+			// Opt-in "Run in playground" button, e.g. ```sparql playground=dbpedia_dump
+			const fenceInfo = /```([^\n]*)\n/.exec(header)?.[1] ?? "";
+			const playground = getPlaygroundExample(fenceInfo);
+
+			const introText = header.replace(/```[^\n]*\n[\s\S]*?```/, "");
 
 			const steps: Array<ParsedStep> = [];
 
@@ -90,7 +96,8 @@ const lessonTransformer = defineTransformer({
 			const lesson = {
 				code,
 				steps,
-				intro: introText
+				intro: introText,
+				playground,
 			};
 			return lesson;
 		});

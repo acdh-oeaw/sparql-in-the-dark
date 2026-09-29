@@ -63,5 +63,9 @@
 			"title": "Seite nicht gefunden"
 		},
 		"title": "Seite nicht gefunden"
+	},
+	"Playground": {
+		"run-in-playground": "Run in playground",
+		"run": "Run"
 	}
 }

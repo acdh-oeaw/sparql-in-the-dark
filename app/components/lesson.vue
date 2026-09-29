@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { VueMarkdownIt } from "@f3ve/vue-markdown-it";
 import type { QueriesCollectionItem } from "@nuxt/content";
+import { PlayIcon } from "lucide-vue-next";
 
 import CodeHighlighter from "@/components/code-highlighter.vue";
 import ScrollSection from "@/components/scroll-section.vue";
@@ -9,7 +10,7 @@ const props = defineProps<{
 	lessonData: QueriesCollectionItem["chapters"][0];
 	isLast: boolean;
 }>();
-
+const t = useTranslations();
 const progress = computed(() => {
 	if (!props.lessonData || !props.lessonData.steps) return 0;
 	const activeIndex = props.lessonData.steps.findIndex((step) => step.id === activeStepId.value);
@@ -21,6 +22,13 @@ const activeStep = computed(() => {
 	return props.lessonData.steps.find((step) => step.id === activeStepId.value);
 });
 const activeStepId = ref(1);
+
+/** Only set when the code fence opts in via `playground` (see `getPlaygroundExample`). */
+const playgroundLink = computed(() => {
+	const { code, playground } = props.lessonData;
+	if (!code || playground == null) return undefined;
+	return getPlaygroundLink(code, playground);
+});
 const handleStepVisible = (id: number) => {
 	activeStepId.value = id;
 };
@@ -66,8 +74,18 @@ const handleStepVisible = (id: number) => {
 							></div>
 							<div className="size-3 rounded-full border border-green-500/50 bg-green-500/20"></div>
 						</div>
-						<div className="font-mono text-xs text-neutral-500 dark:text-slate-500">
-							query.sparql
+						<div class="flex items-center gap-4">
+							<NuxtLink
+								v-if="playgroundLink"
+								class="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs text-neutral-700 transition-colors hover:border-primary/50 hover:text-neutral-950 dark:border-white/10 dark:bg-surface-dark/50 dark:text-slate-300 dark:hover:text-white"
+								:to="playgroundLink"
+							>
+								<PlayIcon class="size-3" />
+								{{t("Playground.run-in-playground")}}
+							</NuxtLink>
+							<div className="font-mono text-xs text-neutral-500 dark:text-slate-500">
+								query.sparql
+							</div>
 						</div>
 					</div>
 					<div v-if="lessonData.code" className="py-4">
@@ -82,8 +100,17 @@ const handleStepVisible = (id: number) => {
 			<div className="sticky top-16 z-40 -mx-4 mb-8 shadow-2xl sm:mx-0 lg:hidden">
 				<div
 					v-if="lessonData.code"
-					className="max-h-[30vh] overflow-auto border-b border-neutral-200 bg-neutral-50 p-4 pl-0 dark:border-white/10 dark:bg-[#151928]"
+					className="relative max-h-[30vh] overflow-auto border-b border-neutral-200 bg-neutral-50 p-4 pl-0 dark:border-white/10 dark:bg-[#151928]"
 				>
+					<NuxtLink
+						v-if="playgroundLink"
+						aria-label="Run in playground"
+						class="sticky top-0 z-10 float-right inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs text-neutral-700 transition-colors hover:border-primary/50 hover:text-neutral-950 dark:border-white/10 dark:bg-surface-dark dark:text-slate-300 dark:hover:text-white"
+						:to="playgroundLink"
+					>
+						<PlayIcon class="size-3" />
+						{{t("Playground.run")}}
+					</NuxtLink>
 					<CodeHighlighter
 						:active-lines="activeStep?.highlightLines ?? []"
 						:code="lessonData.code"

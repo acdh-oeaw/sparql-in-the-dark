@@ -1,11 +1,13 @@
 <script lang="ts" setup>
+import { PlayIcon } from "lucide-vue-next";
+
 import CodeHighlighter from "@/components/code-highlighter.vue";
 
 const route = useRoute();
 const { data: lessonData } = await useAsyncData(route.path, () => {
 	return queryCollection("queries").path(route.path).first();
 });
-console.log(lessonData);
+const t = useTranslations();
 useSeoMeta({
 	title: lessonData.value?.title,
 	description: lessonData.value?.description,
@@ -50,8 +52,20 @@ const children = computed(() => {
 							></div>
 							<div className="size-3 rounded-full border border-green-500/50 bg-green-500/20"></div>
 						</div>
-						<div className="font-mono text-xs text-neutral-500 dark:text-slate-500">
-							query.{{ entry.props.language }}
+						<div class="flex items-center gap-4">
+							<NuxtLink
+								v-if="getPlaygroundExample(entry.props.meta ?? '') !== undefined"
+								class="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs text-neutral-700 transition-colors hover:border-primary/50 hover:text-neutral-950 dark:border-white/10 dark:bg-surface-dark/50 dark:text-slate-300 dark:hover:text-white"
+								:to="
+									getPlaygroundLink(entry.props.code, getPlaygroundExample(entry.props.meta ?? ''))
+								"
+							>
+								<PlayIcon class="size-3" />
+								{{ t("Playground.run-in-playground") }}
+							</NuxtLink>
+							<div className="font-mono text-xs text-neutral-500 dark:text-slate-500">
+								query.{{ entry.props.language }}
+							</div>
 						</div>
 					</div>
 					<div className="py-4">

@@ -151,7 +151,7 @@ See [Property Paths](https://www.w3.org/TR/sparql12-query/#propertypaths) in the
 Another useful pattern for exploring an unknown graph is to query for actual class usage. The following snippet retrieves all classes that have instances and orders classes by the count of instances.
 
 
-```sparql
+```sparql playground=dbpedia_dump
 select distinct ?class (count(?instance) as ?instance_count)
 where {
 	?instance a ?class

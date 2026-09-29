@@ -1,7 +1,7 @@
 # Introduction to SPARQL Queries
 Welcome! This lesson will guide you through the fundamental structure of a SPARQL query. Scroll down to begin and see how queries are built, piece by piece.
 
-```sparql
+```sparql playground=wikidata
 # Find all countries and their capitals
 
 PREFIX wd: <http://www.wikidata.org/entity/>

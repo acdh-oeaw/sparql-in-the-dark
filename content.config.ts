@@ -24,6 +24,7 @@ export default defineContentConfig({
 								.optional(),
 							code: z.string().optional(),
 							intro: z.string().optional(),
+							playground: z.string().optional(),
 						}),
 					),
 					title: z.string().nullable(),
@@ -31,6 +32,21 @@ export default defineContentConfig({
 					rawbody: z.string(),
 				})
 				.passthrough(),
+		}),
+		examples: defineCollection({
+			type: "data",
+			source: "examples/*.yml",
+			schema: z.object({
+				label: z.string(),
+				mode: z.enum(["endpoint", "rdf"]),
+				/** SPARQL endpoint URL, for `mode: endpoint`. */
+				source: z.string().optional(),
+				/** URL of an RDF document to load, for `mode: rdf`. */
+				dataUrl: z.string().optional(),
+				mediaType: z.string().optional(),
+				prefixes: z.string().optional(),
+				query: z.string(),
+			}),
 		}),
 	},
 });

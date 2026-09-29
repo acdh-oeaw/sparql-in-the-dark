@@ -17,16 +17,18 @@ useSeoMeta({
 
 type SourceMode = "endpoint" | "rdf";
 
-interface Example {
-	label: string;
-	mode: SourceMode;
-	source?: string;
-	data?: string;
-	dataUrl?: string;
-	mediaType?: string;
-	prefixes: string;
-	query: string;
-}
+const route = useRoute();
+const router = useRouter();
+
+const { data: exampleEntries } = await useAsyncData("playground-examples", () => {
+	return queryCollection("examples").order("stem", "ASC").all();
+});
+const examples = computed(() => {
+	return (exampleEntries.value ?? []).map((entry) => {
+		return { ...entry, id: getExampleId(entry.stem) };
+	});
+});
+type Example = (typeof examples.value)[number];
 
 const commonPrefixes = [
 	// DBpedia
@@ -61,122 +63,12 @@ const mediaTypes = [
 	{ label: "RDF/XML", value: "application/rdf+xml", highlight: "xml" },
 ] as const;
 
-const shakespeareData = `@prefix ex: <http://example.org/> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-
-ex:Shakespeare a ex:Playwright ;
-  rdfs:label "William Shakespeare" ;
-  ex:born 1564 ;
-  ex:died 1616 .
-
-ex:Hamlet a ex:Play ;
-  rdfs:label "Hamlet" ;
-  ex:genre "Tragedy" ;
-  dcterms:created "1600" ;
-  ex:author ex:Shakespeare .
-
-ex:Macbeth a ex:Play ;
-  rdfs:label "Macbeth" ;
-  ex:genre "Tragedy" ;
-  dcterms:created "1606" ;
-  ex:author ex:Shakespeare .
-
-ex:RomeoAndJuliet a ex:Play ;
-  rdfs:label "Romeo and Juliet" ;
-  ex:genre "Tragedy" ;
-  dcterms:created "1595" ;
-  ex:author ex:Shakespeare .
-
-ex:AMidsummerNightsDream a ex:Play ;
-  rdfs:label "A Midsummer Night's Dream" ;
-  ex:genre "Comedy" ;
-  dcterms:created "1596" ;
-  ex:author ex:Shakespeare .
-
-ex:TwelfthNight a ex:Play ;
-  rdfs:label "Twelfth Night" ;
-  ex:genre "Comedy" ;
-  dcterms:created "1601" ;
-  ex:author ex:Shakespeare .
-
-ex:HenryV a ex:Play ;
-  rdfs:label "Henry V" ;
-  ex:genre "History" ;
-  dcterms:created "1599" ;
-  ex:author ex:Shakespeare .
-`;
-
-const examples: Array<Example> = [
-	{
-		label: "Shakespeare (inline RDF)",
-		mode: "rdf",
-		mediaType: "text/turtle",
-		data: shakespeareData,
-		prefixes: `PREFIX ex: <http://example.org/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dcterms: <http://purl.org/dc/terms/>`,
-		query: `SELECT ?title ?genre ?year WHERE {
-  ?work ex:author ex:Shakespeare ;
-        rdfs:label ?title ;
-        ex:genre ?genre ;
-        dcterms:created ?year .
-}
-ORDER BY ?year`,
-	},
-	{
-		label: "Things in Austria (DBpedia)",
-		mode: "endpoint",
-		source: "https://dbpedia.org/sparql",
-		prefixes: `PREFIX dbo: <http://dbpedia.org/ontology/>
-PREFIX dbr: <http://dbpedia.org/resource/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`,
-		query: `SELECT ?thing ?name
-WHERE  {
-	?thing dbo:country dbr:Austria ;
-		rdfs:label  ?name  .
-	FILTER(lang(?name) = "en" )
-}
-LIMIT 5
-`,
-	},
-	{
-		label: "Cats (Wikidata)",
-		mode: "endpoint",
-		source: "https://query.wikidata.org/sparql",
-		prefixes: `PREFIX wd: <http://www.wikidata.org/entity/>
-PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`,
-		query: `SELECT ?item ?label WHERE {
-  ?item wdt:P31 wd:Q146 ;
-        rdfs:label ?label .
-  FILTER(LANG(?label) = "en")
-}
-LIMIT 20`,
-	},
-	{
-		label: "Austria (DBpedia dump)",
-		mode: "rdf",
-		mediaType: "text/turtle",
-		dataUrl: "/data/sample-data.ttl",
-		prefixes: `PREFIX dbo: <http://dbpedia.org/ontology/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>`,
-		query: `SELECT ?city ?name ?population WHERE {
-  ?city a dbo:City ;
-        rdfs:label ?name ;
-        dbo:populationTotal ?population .
-  FILTER(LANG(?name) = "en")
-}
-ORDER BY DESC(?population)`,
-	},
-];
-
-const sourceMode = ref<SourceMode>(examples[0]!.mode);
+const sourceMode = ref<SourceMode>("endpoint");
 const source = ref("https://dbpedia.org/sparql");
-const rdfData = ref(examples[0]!.data ?? "");
-const rdfMediaType = ref(examples[0]!.mediaType ?? "text/turtle");
-const prefixes = ref(examples[0]!.prefixes);
-const query = ref(examples[0]!.query);
+const rdfData = ref("");
+const rdfMediaType = ref("text/turtle");
+const prefixes = ref("");
+const query = ref("");
 
 const isRdfCollapsed = ref(true);
 const isPrefixesCollapsed = ref(false);
@@ -354,14 +246,41 @@ async function loadExample(example: Example) {
 					isLoadingExample.value = false;
 				}
 			}
-		} else {
-			rdfData.value = example.data ?? "";
 		}
 	}
-	prefixes.value = example.prefixes;
+	prefixes.value = example.prefixes ?? "";
 	query.value = example.query;
 	resetResults();
 }
+
+function selectExample(example: Example) {
+	void router.replace({ query: { example: example.id } });
+	void loadExample(example);
+}
+
+/**
+ * Initialises the editors from the URL: `?example=<id>` picks the data source (and default
+ * query), `?query=<sparql>` overrides the query, e.g. when coming from a chapter.
+ */
+async function loadFromRoute() {
+	const exampleId = route.query.example;
+	const linkedQuery = route.query.query;
+	const example =
+		examples.value.find((entry) => {
+			return entry.id === exampleId;
+		}) ?? examples.value[0];
+
+	if (example) await loadExample(example);
+	// Keep the (possibly large) data out of the way on first load; the query is the focus.
+	isRdfCollapsed.value = true;
+	if (typeof linkedQuery === "string" && linkedQuery.trim()) {
+		const split = splitPrefixes(linkedQuery);
+		prefixes.value = split.prefixes;
+		query.value = split.query;
+	}
+}
+
+void loadFromRoute();
 
 function onKeydown(event: KeyboardEvent) {
 	if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
@@ -392,11 +311,11 @@ function onKeydown(event: KeyboardEvent) {
 				>
 				<button
 					v-for="example in examples"
-					:key="example.label"
+					:key="example.id"
 					class="rounded-full border border-neutral-200 bg-neutral-100 px-4 py-1.5 text-sm text-neutral-700 transition-colors hover:border-primary/50 hover:text-neutral-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-surface-dark/50 dark:text-slate-300 dark:hover:text-white"
 					:disabled="isLoadingExample"
 					type="button"
-					@click="loadExample(example)"
+					@click="selectExample(example)"
 				>
 					{{ example.label }}
 				</button>
