@@ -157,7 +157,7 @@ async function runQuery() {
 							baseIRI: "http://example.org/",
 						},
 					]
-				: [source.value.trim()];
+				: [{ type: "sparql" as const, value: source.value.trim() }];
 		const fullQuery = [prefixes.value.trim(), query.value.trim()]
 			.filter((part) => {
 				return part.length > 0;
