@@ -42,10 +42,49 @@ function onKeydown(event: KeyboardEvent) {
 		textarea.selectionStart = textarea.selectionEnd = selectionStart + 2;
 	});
 }
+const root = useTemplateRef("root");
+
+function getScrollParent(start: HTMLElement | null) {
+	for (let element = start; element && element !== document.body; element = element.parentElement) {
+		const { overflowY } = getComputedStyle(element);
+		const isScrollable = overflowY === "auto" || overflowY === "scroll";
+		if (isScrollable && element.scrollHeight > element.clientHeight) return element;
+	}
+	return null;
+}
+// can be simplified once scrollIntoView's `container` option has wider support: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView#container
+function scrollActiveLinesIntoView() {
+	const activeLines = root.value?.querySelectorAll<HTMLElement>("[data-active]");
+	const first = activeLines?.[0];
+	const last = activeLines?.[activeLines.length - 1];
+	if (!first || !last) return;
+	const scrollParent = getScrollParent(root.value);
+	if (!scrollParent) return;
+
+	const padding = 16;
+	const offset = scrollParent.getBoundingClientRect().top - scrollParent.scrollTop;
+	const top = first.getBoundingClientRect().top - offset - padding;
+	const bottom = last.getBoundingClientRect().bottom - offset + padding;
+	const viewTop = scrollParent.scrollTop;
+	const viewBottom = viewTop + scrollParent.clientHeight;
+
+	let target: number;
+	if (top < viewTop || bottom - top > scrollParent.clientHeight) target = top;
+	else if (bottom > viewBottom) target = bottom - scrollParent.clientHeight;
+	else return;
+	scrollParent.scrollTo({ top: target, behavior: "smooth" });
+}
+
+watch(
+	() => props.activeLines,
+	() => {
+		void nextTick(scrollActiveLinesIntoView);
+	},
+);
 </script>
 
 <template>
-	<div v-if="!editable" class="overflow-x-auto font-mono text-sm leading-6">
+	<div v-if="!editable" ref="root" class="overflow-auto font-mono text-sm leading-6">
 		<div
 			v-for="(line, index) in lines"
 			:key="index"
@@ -55,6 +94,7 @@ function onKeydown(event: KeyboardEvent) {
 					? 'border-l-2 border-primary bg-primary/20'
 					: 'border-l-2 border-transparent hover:bg-neutral-950/5 dark:hover:bg-white/5'
 			"
+			:data-active="isHighlighted(index) || undefined"
 		>
 			<span
 				class="mr-4 inline-block w-8 shrink-0 text-right text-neutral-400 select-none dark:text-slate-600"

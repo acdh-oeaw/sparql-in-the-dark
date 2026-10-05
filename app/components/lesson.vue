@@ -42,7 +42,9 @@ const handleStepVisible = (id: number) => {
 			<VueMarkdownIt :source="lessonData.intro ?? ''" />
 		</div>
 		<div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-24">
-			<div className="hidden self-start lg:sticky lg:top-32 lg:block">
+			<div
+				className="hidden self-start lg:sticky lg:top-32 lg:flex lg:max-h-[calc(100vh-10rem)] lg:flex-col"
+			>
 				<div className="mb-6 flex items-center gap-4">
 					<span
 						className="font-mono text-xs tracking-widest text-neutral-500 uppercase dark:text-slate-500"
@@ -62,7 +64,7 @@ const handleStepVisible = (id: number) => {
 				</div>
 
 				<div
-					className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 shadow-2xl ring-1 shadow-neutral-950/10 ring-neutral-950/5 dark:border-white/10 dark:bg-[#151928] dark:shadow-black/50 dark:ring-white/5"
+					className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 shadow-2xl ring-1 shadow-neutral-950/10 ring-neutral-950/5 dark:border-white/10 dark:bg-[#151928] dark:shadow-black/50 dark:ring-white/5"
 				>
 					<div
 						className="flex items-center justify-between border-b border-neutral-200 bg-neutral-100 px-4 py-3 dark:border-white/5 dark:bg-[#1a1f30]"
@@ -81,14 +83,14 @@ const handleStepVisible = (id: number) => {
 								:to="playgroundLink"
 							>
 								<PlayIcon class="size-3" />
-								{{t("Playground.run-in-playground")}}
+								{{ t("Playground.run-in-playground") }}
 							</NuxtLink>
 							<div className="font-mono text-xs text-neutral-500 dark:text-slate-500">
 								query.sparql
 							</div>
 						</div>
 					</div>
-					<div v-if="lessonData.code" className="py-4">
+					<div v-if="lessonData.code" className="min-h-0 overflow-auto py-4">
 						<CodeHighlighter
 							:active-lines="activeStep?.highlightLines ?? []"
 							:code="lessonData.code"
@@ -109,7 +111,7 @@ const handleStepVisible = (id: number) => {
 						:to="playgroundLink"
 					>
 						<PlayIcon class="size-3" />
-						{{t("Playground.run")}}
+						{{ t("Playground.run") }}
 					</NuxtLink>
 					<CodeHighlighter
 						:active-lines="activeStep?.highlightLines ?? []"
