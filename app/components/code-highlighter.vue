@@ -17,7 +17,7 @@ const props = withDefaults(
 	},
 );
 
-const emit = defineEmits<{ "update:code": [value: string] }>();
+const emit = defineEmits<{ "update:code": [value: string]; clickLine: [index: number] }>();
 
 const lines = computed(() => {
 	return (props.editable ? props.code : props.code.trim()).split("\n");
@@ -95,6 +95,10 @@ watch(
 					: 'border-l-2 border-transparent hover:bg-neutral-950/5 dark:hover:bg-white/5'
 			"
 			:data-active="isHighlighted(index) || undefined"
+			role="button"
+			tabIndex="0"
+			@click="emit('clickLine', index)"
+			@keydown.Enter="emit('clickLine', index)"
 		>
 			<span
 				class="mr-4 inline-block w-8 shrink-0 text-right text-neutral-400 select-none dark:text-slate-600"

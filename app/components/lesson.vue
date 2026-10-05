@@ -32,6 +32,16 @@ const playgroundLink = computed(() => {
 const handleStepVisible = (id: number) => {
 	activeStepId.value = id;
 };
+
+function jumpToStep(lineIndex: number) {
+	const firstMatchingStep = props.lessonData.steps
+		?.filter((step) => step.highlightLines.includes(lineIndex) && step.id !== activeStepId.value)
+		.toSorted((a, b) => a.highlightLines.length - b.highlightLines.length)[0];
+	if (firstMatchingStep)
+		document
+			.querySelector(`[data-step-id="${firstMatchingStep.id}"]`)
+			?.scrollIntoView({ block: "center", behavior: "smooth" });
+}
 </script>
 
 <template>
@@ -94,6 +104,7 @@ const handleStepVisible = (id: number) => {
 						<CodeHighlighter
 							:active-lines="activeStep?.highlightLines ?? []"
 							:code="lessonData.code"
+							@click-line="jumpToStep"
 						/>
 					</div>
 				</div>

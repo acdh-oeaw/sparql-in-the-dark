@@ -45,6 +45,7 @@ onMounted(() => {
 			'flex min-h-[60vh] flex-col justify-center px-2 py-12 transition-all duration-500',
 			props.isLast ? 'pb-32' : '',
 		]"
+		:data-step-id="props.id"
 	>
 		<div
 			:class="[
