@@ -12,7 +12,8 @@ const props = defineProps<{
 }>();
 const t = useTranslations();
 const progress = computed(() => {
-	if (!props.lessonData || !props.lessonData.steps) return 0;
+	if (!props.lessonData || !props.lessonData.steps || props.lessonData.steps.length === 0)
+		return 100;
 	const activeIndex = props.lessonData.steps.findIndex((step) => step.id === activeStepId.value);
 	return (100 * (activeIndex + 1)) / props.lessonData.steps.length;
 });
