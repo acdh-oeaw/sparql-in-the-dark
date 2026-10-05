@@ -49,10 +49,10 @@ onMounted(() => {
 	>
 		<div
 			:class="[
-				'relative rounded-2xl border p-8 backdrop-blur-sm transition-all duration-500',
+				'relative rounded-2xl border p-6 backdrop-blur-sm transition-all duration-500 sm:p-8',
 				props.isActive
 					? 'translate-x-0 border-primary/50 bg-surface-light opacity-100 shadow-lg shadow-primary/10 dark:bg-surface-dark'
-					: 'translate-x-4 border-neutral-950/5 bg-surface-light/50 opacity-40 grayscale dark:border-white/5 dark:bg-surface-dark/50',
+					: 'translate-x-2 border-neutral-950/5 bg-surface-light/50 opacity-40 grayscale sm:translate-x-4 dark:border-white/5 dark:bg-surface-dark/50',
 			]"
 		>
 			<!-- Step Number Badge -->

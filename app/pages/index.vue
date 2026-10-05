@@ -18,7 +18,7 @@ const { data: intro } = await useAsyncData(() => {
 		<div
 			v-if="intro"
 			id="intro"
-			class="prose px-6 py-15 text-neutral-950 lg:prose-lg dark:text-white dark:prose-invert"
+			class="prose px-2 py-8 text-neutral-950 sm:px-6 sm:py-15 lg:prose-lg dark:text-white dark:prose-invert"
 		>
 			<ContentRenderer :value="intro"></ContentRenderer>
 		</div>
@@ -34,7 +34,7 @@ const { data: intro } = await useAsyncData(() => {
 @reference "../styles/index.css";
 
 #intro h1 {
-	@apply text-4xl leading-tight font-bold text-neutral-950 text-center dark:text-white;
+	@apply text-3xl sm:text-4xl leading-tight font-bold text-neutral-950 text-center dark:text-white;
 }
 
 #intro h1 + p {
